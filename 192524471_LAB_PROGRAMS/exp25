@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+struct Edge {
+    int u, v, w;
+};
+
+int parent[20];
+
+int find(int i) {
+    while (parent[i] != i)
+        i = parent[i];
+
+    return i;
+}
+
+void unionSet(int a, int b) {
+    parent[find(a)] = find(b);
+}
+
+int main() {
+    struct Edge e[50], temp;
+    int n, m, i, j, count = 0, total = 0;
+    int a, b;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter number of edges: ");
+    scanf("%d", &m);
+
+    printf("Enter edges (source destination weight):\n");
+
+    for (i = 0; i < m; i++)
+        scanf("%d%d%d", &e[i].u, &e[i].v, &e[i].w);
+
+    for (i = 0; i < n; i++)
+        parent[i] = i;
+
+    for (i = 0; i < m - 1; i++) {
+        for (j = 0; j < m - i - 1; j++) {
+            if (e[j].w > e[j + 1].w) {
+                temp = e[j];
+                e[j] = e[j + 1];
+                e[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("Edges in MST:\n");
+
+    for (i = 0; i < m && count < n - 1; i++) {
+        a = find(e[i].u);
+        b = find(e[i].v);
+
+        if (a != b) {
+            printf("%d - %d : %d\n",
+                   e[i].u, e[i].v, e[i].w);
+
+            total += e[i].w;
+            unionSet(a, b);
+            count++;
+        }
+    }
+
+    printf("Minimum cost = %d", total);
+
+    return 0;
+}
